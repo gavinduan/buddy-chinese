@@ -1,12 +1,31 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander'
-import { getCompanion, rollWithSeed, saveCompanion } from './companion.js'
+import { getCompanion, rollWithSeed, rollWithPity, saveCompanion } from './companion.js'
 import { renderSprite, renderFace, spriteFrameCount, RARITY_COLORS } from './sprites.js'
-import { RARITY_STARS, RARITY_NAMES, SPECIES, SPECIES_NAMES, STAT_NAMES_CN, type Companion } from './types.js'
+import { RARITY_STARS, RARITY_NAMES, RARITY_BADGES, SPECIES, SPECIES_NAMES, STAT_NAMES_CN, type Companion, type StatName } from './types.js'
 import { getConfig, saveConfig } from './config.js'
+import chalk from 'chalk'
+
+type ChalkFn = (str: string) => string
 
 const program = new Command()
+
+function getStatColor(value: number): ChalkFn {
+  if (value >= 80) return chalk.green.bold
+  if (value >= 60) return chalk.green
+  if (value >= 40) return chalk.yellow
+  if (value >= 20) return chalk.red
+  return chalk.gray
+}
+
+function printStatBar(name: string, value: number): void {
+  const filled = Math.floor(value / 5)
+  const empty = 20 - filled
+  const filledBar = getStatColor(value)('█'.repeat(filled))
+  const emptyBar = '░'.repeat(empty)
+  console.log(`  ${name}: ${filledBar}${emptyBar} ${value}`)
+}
 
 program
   .name('buddy')
@@ -25,13 +44,12 @@ function printCompanionInfo(companion: Companion): void {
 ${renderSprite(companion).join('\n')}
 
 👋 ${companion.name}
-${RARITY_STARS[companion.rarity as keyof typeof RARITY_STARS]} ${rarityColor(RARITY_NAMES[companion.rarity])} ${SPECIES_NAMES[companion.species]} ${companion.shiny ? '✨' : ''}
+${RARITY_STARS[companion.rarity as keyof typeof RARITY_STARS]} ${RARITY_BADGES[companion.rarity]} ${rarityColor(RARITY_NAMES[companion.rarity])} ${SPECIES_NAMES[companion.species]} ${companion.shiny ? '✨' : ''}
 `)
   
   console.log('📊 统计信息:')
   Object.entries(companion.stats).forEach(([stat, value]) => {
-    const bar = '█'.repeat(Math.floor((value as number) / 5))
-    console.log(`  ${STAT_NAMES_CN[stat as keyof typeof STAT_NAMES_CN]}: ${bar} ${value}`)
+    printStatBar(STAT_NAMES_CN[stat as StatName], value as number)
   })
   
   console.log(`
@@ -59,9 +77,14 @@ program
   .option('--seed <seed>', '指定种子以获得相同的 Buddy')
   .action((options) => {
     const seed = options.seed || Date.now().toString()
-    const { bones, inspirationSeed } = rollWithSeed(seed)
+    const config = getConfig()
+    const pity = config.pityCounter || 0
+    const { bones, inspirationSeed } = options.seed ? rollWithSeed(seed) : rollWithPity(seed, pity)
     
     console.log(`正在孵化新的 Buddy...`)
+    if (pity >= 10) {
+      console.log(chalk.yellow(`🌟 保底进度: ${pity}/50`))
+    }
     printSprite(renderSprite(bones))
     
     const name = `Buddy_${Date.now().toString().slice(-6)}`
@@ -74,9 +97,37 @@ program
       hatchedAt: Date.now()
     }
     
+    if (bones.rarity === 'common') {
+      saveConfig(c => ({ ...c, pityCounter: (c.pityCounter || 0) + 1 }))
+    } else {
+      saveConfig(c => ({ ...c, pityCounter: 0 }))
+    }
+    
+    if (bones.rarity !== 'common' && pity >= 10) {
+      console.log(chalk.green(`🎉 保底触发！`))
+    }
+    
     saveCompanion(companion)
     console.log(`\n🎉 恭喜！你的新 Buddy ${name} 孵化成功！`)
     printCompanionInfo(companion)
+  })
+
+program
+  .command('random')
+  .description('随机预览一个 Buddy（不保存）')
+  .option('--seed <seed>', '指定种子')
+  .action((options) => {
+    const seed = options.seed || Math.random().toString(36).slice(2)
+    const { bones } = rollWithSeed(seed)
+    
+    console.log(`🔍 随机预览 (种子: ${seed})`)
+    printSprite(renderSprite(bones))
+    
+    const rarityColor = RARITY_COLORS[bones.rarity]
+    console.log(`
+${RARITY_STARS[bones.rarity]} ${RARITY_BADGES[bones.rarity]} ${rarityColor(bones.rarity)} ${SPECIES_NAMES[bones.species]} ${bones.shiny ? '✨' : ''}
+
+💡 使用 --seed ${seed} 可以孵化相同的 Buddy`)
   })
 
 program
@@ -119,6 +170,26 @@ program
       console.log('动画已停止')
       process.exit(0)
     })
+  })
+
+program
+  .command('abandon')
+  .description('放生当前 Buddy')
+  .action(() => {
+    const companion = getCompanion()
+    if (!companion) {
+      console.log('❌ 你还没有 Buddy！')
+      return
+    }
+    
+    saveConfig(config => {
+      const newConfig = { ...config }
+      delete newConfig.companion
+      return newConfig
+    })
+    
+    console.log(`💨 ${companion.name} 已经被放生了！`)
+    console.log('使用 `buddy hatch` 孵化一个新的 Buddy。')
   })
 
 program

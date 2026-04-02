@@ -36,11 +36,29 @@ function pick<T>(rng: () => number, arr: readonly T[]): T {
   return arr[Math.floor(rng() * arr.length)]!
 }
 
-function rollRarity(rng: () => number): Rarity {
-  const total = Object.values(RARITY_WEIGHTS).reduce((a, b) => a + b, 0)
+function rollRarity(rng: () => number, pity: number = 0): Rarity {
+  const weights = { ...RARITY_WEIGHTS }
+  
+  if (pity >= 10) {
+    weights.uncommon += 20
+    weights.rare += 10
+  }
+  if (pity >= 20) {
+    weights.rare += 15
+    weights.epic += 5
+  }
+  if (pity >= 30) {
+    weights.epic += 10
+    weights.legendary += 2
+  }
+  if (pity >= 50) {
+    weights.legendary += 5
+  }
+  
+  const total = Object.values(weights).reduce((a, b) => a + b, 0)
   let roll = rng() * total
   for (const rarity of RARITIES) {
-    roll -= RARITY_WEIGHTS[rarity]
+    roll -= weights[rarity]
     if (roll < 0) return rarity
   }
   return 'common'
@@ -83,8 +101,8 @@ export type Roll = {
   inspirationSeed: number
 }
 
-function rollFrom(rng: () => number): Roll {
-  const rarity = rollRarity(rng)
+function rollFrom(rng: () => number, pity: number = 0): Roll {
+  const rarity = rollRarity(rng, pity)
   const bones: CompanionBones = {
     rarity,
     species: pick(rng, SPECIES),
@@ -100,13 +118,18 @@ let rollCache: { key: string; value: Roll } | undefined
 export function roll(userId: string): Roll {
   const key = userId + SALT
   if (rollCache?.key === key) return rollCache.value
-  const value = rollFrom(mulberry32(hashString(key)))
+  const pity = getConfig().pityCounter || 0
+  const value = rollFrom(mulberry32(hashString(key)), pity)
   rollCache = { key, value }
   return value
 }
 
 export function rollWithSeed(seed: string): Roll {
   return rollFrom(mulberry32(hashString(seed)))
+}
+
+export function rollWithPity(seed: string, pity: number): Roll {
+  return rollFrom(mulberry32(hashString(seed)), pity)
 }
 
 export function companionUserId(): string {

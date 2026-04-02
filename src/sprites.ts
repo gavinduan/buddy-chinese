@@ -475,9 +475,14 @@ const HAT_LINES: Record<Hat, string> = {
 export function renderSprite(bones: CompanionBones, frame = 0): string[] {
   const baseColorFn = RARITY_COLORS[bones.rarity]
   const frames = BODIES[bones.species]
-  const body = frames[frame % frames.length]!.map(line =>
-    line.replaceAll('{E}', bones.eye),
-  )
+  
+  const eyeColorFn = bones.shiny ? (s: string) => s : chalk.white
+  const boldEye = bones.shiny ? chalk.bold : (s: string) => s
+  
+  const body = frames[frame % frames.length]!.map(line => {
+    const withEye = line.replaceAll('{E}', bones.eye)
+    return withEye.replace(new RegExp(bones.eye, 'g'), (match) => boldEye(eyeColorFn(match)))
+  })
   
   let lines: string[]
   if (bones.shiny) {

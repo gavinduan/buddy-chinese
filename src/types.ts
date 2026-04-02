@@ -181,6 +181,14 @@ export const RARITY_STARS = {
   legendary: '★★★★★',
 } as const satisfies Record<Rarity, string>
 
+export const RARITY_BADGES: Record<Rarity, string> = {
+  common: '🐛',
+  uncommon: '🌿',
+  rare: '💎',
+  epic: '🔮',
+  legendary: '👑',
+} as const
+
 export const RARITY_COLORS = {
   common: 'inactive',
   uncommon: 'success',

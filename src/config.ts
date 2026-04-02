@@ -5,6 +5,7 @@ import { type StoredCompanion } from './types.js'
 export interface Config {
   userId?: string
   companion?: StoredCompanion
+  pityCounter?: number
 }
 
 const CONFIG_PATH = join(process.env.HOME || process.env.USERPROFILE || '.', '.buddy-cn.json')
