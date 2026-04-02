@@ -2,7 +2,7 @@
 
 import { Command } from 'commander'
 import { getCompanion, rollWithSeed, saveCompanion } from './companion.js'
-import { renderSprite, renderFace, spriteFrameCount } from './sprites.js'
+import { renderSprite, renderFace, spriteFrameCount, RARITY_COLORS } from './sprites.js'
 import { RARITY_STARS, RARITY_NAMES, SPECIES, SPECIES_NAMES, STAT_NAMES_CN, type Companion } from './types.js'
 import { getConfig, saveConfig } from './config.js'
 
@@ -18,12 +18,14 @@ function printSprite(sprite: string[]): void {
 }
 
 function printCompanionInfo(companion: Companion): void {
+  const rarityColor = RARITY_COLORS[companion.rarity as keyof typeof RARITY_COLORS]
+  
   console.log(`
 
 ${renderSprite(companion).join('\n')}
 
 👋 ${companion.name}
-${RARITY_STARS[companion.rarity as keyof typeof RARITY_STARS]} ${RARITY_NAMES[companion.rarity]} ${SPECIES_NAMES[companion.species]} ${companion.shiny ? '✨' : ''}
+${RARITY_STARS[companion.rarity as keyof typeof RARITY_STARS]} ${rarityColor(RARITY_NAMES[companion.rarity])} ${SPECIES_NAMES[companion.species]} ${companion.shiny ? '✨' : ''}
 `)
   
   console.log('📊 统计信息:')

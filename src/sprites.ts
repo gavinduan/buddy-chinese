@@ -1,4 +1,5 @@
-import type { CompanionBones, Eye, Hat, Species } from './types.js'
+import type { CompanionBones, Eye, Hat, Rarity, Species } from './types.js'
+import chalk from 'chalk'
 import {
   axolotl,
   blob,
@@ -19,6 +20,16 @@ import {
   snail,
   turtle,
 } from './types.js'
+
+type ChalkFunction = (str: string) => string
+
+export const RARITY_COLORS: Record<Rarity, ChalkFunction> = {
+  common: chalk.gray,
+  uncommon: chalk.green,
+  rare: chalk.blue,
+  epic: chalk.magenta,
+  legendary: chalk.yellow,
+}
 
 const BODIES: Record<Species, string[][]> = {
   [duck]: [
@@ -449,13 +460,14 @@ const HAT_LINES: Record<Hat, string> = {
 }
 
 export function renderSprite(bones: CompanionBones, frame = 0): string[] {
+  const colorFn = RARITY_COLORS[bones.rarity]
   const frames = BODIES[bones.species]
   const body = frames[frame % frames.length]!.map(line =>
     line.replaceAll('{E}', bones.eye),
   )
-  const lines = [...body]
+  const lines = body.map(line => colorFn(line))
   if (bones.hat !== 'none' && !lines[0]!.trim()) {
-    lines[0] = HAT_LINES[bones.hat]
+    lines[0] = colorFn(HAT_LINES[bones.hat])
   }
   if (!lines[0]!.trim() && frames.every(f => !f[0]!.trim())) lines.shift()
   return lines
