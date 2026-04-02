@@ -12,19 +12,41 @@ type ChalkFn = (str: string) => string
 const program = new Command()
 
 function getStatColor(value: number): ChalkFn {
-  if (value >= 80) return chalk.green.bold
-  if (value >= 60) return chalk.green
-  if (value >= 40) return chalk.yellow
-  if (value >= 20) return chalk.red
+  if (value >= 80) return chalk.cyan.bold
+  if (value >= 60) return chalk.magenta
+  if (value >= 40) return chalk.blue
+  if (value >= 20) return chalk.yellow
   return chalk.gray
 }
 
 function printStatBar(name: string, value: number): void {
-  const filled = Math.floor(value / 5)
-  const empty = 20 - filled
-  const filledBar = getStatColor(value)('█'.repeat(filled))
-  const emptyBar = '░'.repeat(empty)
-  console.log(`  ${name}: ${filledBar}${emptyBar} ${value}`)
+  const segments = 10
+  const filled = Math.floor((value / 100) * segments)
+  const empty = segments - filled
+  
+  const colors = [
+    chalk.red,
+    chalk.yellow,
+    chalk.green.cyan,
+    chalk.cyan,
+    chalk.blue,
+    chalk.magenta,
+    chalk.red,
+    chalk.yellow,
+    chalk.green,
+    chalk.cyan,
+  ]
+  
+  let bar = ''
+  for (let i = 0; i < filled; i++) {
+    bar += colors[i % colors.length]('▰')
+  }
+  for (let i = 0; i < empty; i++) {
+    bar += chalk.dim('▱')
+  }
+  
+  const percentage = chalk.white(`${value}`.padStart(3))
+  console.log(`  ${chalk.cyan(name)}: ${bar} ${percentage}%`)
 }
 
 program
