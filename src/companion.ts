@@ -117,8 +117,7 @@ export function companionUserId(): string {
 export function getCompanion(): Companion | undefined {
   const stored = getConfig().companion
   if (!stored) return undefined
-  const { bones } = roll(companionUserId())
-  return { ...stored, ...bones }
+  return stored as Companion
 }
 
 export function saveCompanion(companion: Companion): void {
@@ -127,7 +126,13 @@ export function saveCompanion(companion: Companion): void {
     companion: {
       name: companion.name,
       personality: companion.personality,
-      hatchedAt: companion.hatchedAt
+      hatchedAt: companion.hatchedAt,
+      rarity: companion.rarity,
+      species: companion.species,
+      eye: companion.eye,
+      hat: companion.hat,
+      shiny: companion.shiny,
+      stats: companion.stats,
     }
   }))
 }

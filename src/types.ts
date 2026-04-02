@@ -163,7 +163,7 @@ export type Companion = CompanionBones &
     hatchedAt: number
   }
 
-export type StoredCompanion = CompanionSoul & { hatchedAt: number }
+export type StoredCompanion = CompanionSoul & CompanionBones & { hatchedAt: number }
 
 export const RARITY_WEIGHTS = {
   common: 60,
