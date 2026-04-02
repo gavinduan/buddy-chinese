@@ -147,7 +147,7 @@ program
     
     const rarityColor = RARITY_COLORS[bones.rarity]
     console.log(`
-${RARITY_STARS[bones.rarity]} ${RARITY_BADGES[bones.rarity]} ${rarityColor(bones.rarity)} ${SPECIES_NAMES[bones.species]} ${bones.shiny ? '✨' : ''}
+${RARITY_STARS[bones.rarity]} ${RARITY_BADGES[bones.rarity]} ${rarityColor(RARITY_NAMES[bones.rarity])} ${SPECIES_NAMES[bones.species]} ${bones.shiny ? '✨' : ''}
 
 💡 使用 --seed ${seed} 可以孵化相同的 Buddy`)
   })
