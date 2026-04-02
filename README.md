@@ -7,8 +7,12 @@
 - 🐣 孵化独特的 Buddy
 - 🎨 显示 Buddy 的 ASCII 艺术形象（根据稀有度着色）
 - 🌈 稀有度颜色：普通(灰色)、精良(绿色)、稀有(蓝色)、史诗(紫色)、传说(金色)
-- 📊 查看 Buddy 的统计信息
+- 🏅 稀有度徽章：🐛普通 🌿精良 💎稀有 🔮史诗 👑传说
+- ✨ Shiny 彩虹效果
+- 📊 赛博朋克风格统计条
 - 🎬 动画展示 Buddy
+- 🔮 保底机制（连续普通增加稀有度概率）
+- 🎲 随机预览（不保存）
 - ⚙️ 配置管理
 
 ## 安装
@@ -59,7 +63,37 @@ npm run start -- show
 或使用全局命令：
 
 ```bash
-buddy-cn show
+buddy show
+```
+
+### 随机预览 Buddy
+
+```bash
+npm run start -- random
+```
+
+或使用全局命令：
+
+```bash
+buddy random
+```
+
+可以指定种子：
+
+```bash
+buddy random --seed myseed
+```
+
+### 放生 Buddy
+
+```bash
+npm run start -- abandon
+```
+
+或使用全局命令：
+
+```bash
+buddy abandon
 ```
 
 ### 列出所有可用的物种
