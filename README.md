@@ -13,16 +13,28 @@
 ## 安装
 
 ```bash
-cd buddy-chinese
+cd buddy-cn
 npm install
 ```
 
 ## 使用方法
 
+### 安装全局命令
+
+```bash
+npm run build && npm link
+```
+
 ### 孵化新的 Buddy
 
 ```bash
 npm run start -- hatch
+```
+
+或使用全局命令：
+
+```bash
+buddy-cn hatch
 ```
 
 可以使用 `--seed` 参数指定种子以获得相同的 Buddy：
@@ -31,10 +43,22 @@ npm run start -- hatch
 npm run start -- hatch --seed myseed123
 ```
 
+或：
+
+```bash
+buddy-cn hatch --seed myseed123
+```
+
 ### 显示当前的 Buddy
 
 ```bash
 npm run start -- show
+```
+
+或使用全局命令：
+
+```bash
+buddy-cn show
 ```
 
 ### 列出所有可用的物种
@@ -43,16 +67,34 @@ npm run start -- show
 npm run start -- list
 ```
 
+或使用全局命令：
+
+```bash
+buddy-cn list
+```
+
 ### 展示 Buddy 的动画
 
 ```bash
 npm run start -- animate
 ```
 
+或使用全局命令：
+
+```bash
+buddy-cn animate
+```
+
 可以使用 `--fps` 参数指定动画帧率：
 
 ```bash
 npm run start -- animate --fps 15
+```
+
+或：
+
+```bash
+buddy-cn animate --fps 15
 ```
 
 ### 配置管理
@@ -63,10 +105,22 @@ npm run start -- animate --fps 15
 npm run start -- config --show
 ```
 
+或使用全局命令：
+
+```bash
+buddy-cn config --show
+```
+
 设置配置项：
 
 ```bash
 npm run start -- config --set userId=myuser
+```
+
+或：
+
+```bash
+buddy-cn config --set userId=myuser
 ```
 
 ## 构建应用
