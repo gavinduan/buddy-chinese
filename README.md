@@ -1,6 +1,6 @@
-# Buddy Terminal
+# Buddy Chinese
 
-一个独立的终端版 Buddy 应用，基于原始 Claude Code 的 buddy 模块创建。
+一个独立的中文终端版 Buddy 应用，基于原始 Claude Code 的 buddy 模块创建。
 
 ## 功能特性
 
@@ -13,7 +13,7 @@
 ## 安装
 
 ```bash
-cd buddy-terminal
+cd buddy-chinese
 npm install
 ```
 
@@ -79,12 +79,12 @@ npm run build
 
 ## 配置文件
 
-配置文件存储在用户主目录下的 `.buddy-terminal.json` 文件中。
+配置文件存储在用户主目录下的 `.buddy-chinese.json` 文件中。
 
 ## 项目结构
 
 ```
-buddy-terminal/
+buddy-chinese/
 ├── src/
 │   ├── index.ts          # 主入口文件
 │   ├── types.ts          # 类型定义

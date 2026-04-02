@@ -1,10 +1,10 @@
 {
-  "name": "buddy-terminal",
+  "name": "buddy-chinese",
   "version": "1.0.0",
-  "description": "独立的终端版 Buddy 应用",
+  "description": "独立的中文终端版 Buddy 应用",
   "main": "dist/index.js",
   "bin": {
-    "buddy-term": "./dist/index.js"
+    "buddy-chinese": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",
