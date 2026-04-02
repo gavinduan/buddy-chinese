@@ -31,6 +31,19 @@ export const RARITY_COLORS: Record<Rarity, ChalkFunction> = {
   legendary: chalk.yellow,
 }
 
+const SHINY_COLORS: ChalkFunction[] = [
+  chalk.red,
+  chalk.yellow,
+  chalk.green,
+  chalk.cyan,
+  chalk.blue,
+  chalk.magenta,
+]
+
+export function getShinyGradient(index: number): ChalkFunction {
+  return SHINY_COLORS[index % SHINY_COLORS.length]
+}
+
 const BODIES: Record<Species, string[][]> = {
   [duck]: [
     [
@@ -460,14 +473,24 @@ const HAT_LINES: Record<Hat, string> = {
 }
 
 export function renderSprite(bones: CompanionBones, frame = 0): string[] {
-  const colorFn = RARITY_COLORS[bones.rarity]
+  const baseColorFn = RARITY_COLORS[bones.rarity]
   const frames = BODIES[bones.species]
   const body = frames[frame % frames.length]!.map(line =>
     line.replaceAll('{E}', bones.eye),
   )
-  const lines = body.map(line => colorFn(line))
+  
+  let lines: string[]
+  if (bones.shiny) {
+    lines = body.map((line, i) => {
+      const shinyFn = getShinyGradient(i + frame)
+      return shinyFn(line)
+    })
+  } else {
+    lines = body.map(line => baseColorFn(line))
+  }
+  
   if (bones.hat !== 'none' && !lines[0]!.trim()) {
-    lines[0] = colorFn(HAT_LINES[bones.hat])
+    lines[0] = bones.shiny ? getShinyGradient(frame)(HAT_LINES[bones.hat]) : baseColorFn(HAT_LINES[bones.hat])
   }
   if (!lines[0]!.trim() && frames.every(f => !f[0]!.trim())) lines.shift()
   return lines
