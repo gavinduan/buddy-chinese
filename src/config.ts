@@ -7,7 +7,7 @@ export interface Config {
   companion?: StoredCompanion
 }
 
-const CONFIG_PATH = join(process.env.HOME || process.env.USERPROFILE || '.', '.buddy-chinese.json')
+const CONFIG_PATH = join(process.env.HOME || process.env.USERPROFILE || '.', '.buddy-cn.json')
 
 function getDefaultConfig(): Config {
   return {
