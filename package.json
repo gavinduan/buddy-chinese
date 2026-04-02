@@ -1,0 +1,22 @@
+{
+  "name": "buddy-terminal",
+  "version": "1.0.0",
+  "description": "独立的终端版 Buddy 应用",
+  "main": "dist/index.js",
+  "bin": {
+    "buddy-term": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}
